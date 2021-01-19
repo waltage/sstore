@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option go_package = ".;pb";
+
+message Empty {}
+
+
+message Bucket {
+  string name = 1;
+}
+
+message Key {
+  Bucket bucket = 1;
+  string id = 2;
+  uint64 version = 3;
+}
+
+message Object {
+  Key key = 1;
+  bytes payload = 2;
+}
+
+message BucketList {
+  repeated Bucket buckets = 1;
+}
+
+message KeyList {
+  repeated Key keys = 1;
+}
+
+message ObjectList {
+  repeated Object objects = 1;
+}
+
+service SStoreRPC {
+  rpc GetNewKey (Bucket) returns (Key) {}
+  rpc ListBuckets (Empty) returns (stream Bucket) {}
+  rpc ListKeys (Bucket) returns (stream Key) {}
+  rpc Search (Key) returns (stream Key) {}
+  rpc Version (Key) returns (Key) {}
+  rpc Put (Object) returns (Key) {}
+  rpc Get (Key) returns (Object) {}
+  rpc Delete (Key) returns (Empty) {}
+}
